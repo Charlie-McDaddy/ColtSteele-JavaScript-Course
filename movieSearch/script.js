@@ -1,14 +1,10 @@
-createAutoComplete({
-  root: document.querySelector(".autocomplete"),
+const autocompleteConfig = {
   renderOption(item) {
     const imgSrc = item.Poster === "N/A" ? "" : item.Poster;
     return `
     <img src="${imgSrc}"/>
     ${item.Title} (${item.Year})
     `;
-  },
-  onOptionSelect(item) {
-    onItemSelect(item);
   },
   inputValue(item) {
     return item.Title;
@@ -26,16 +22,33 @@ createAutoComplete({
     }
     return response.data.Search;
   },
+};
+
+createAutoComplete({
+  ...autocompleteConfig,
+  root: document.querySelector("#left-autocomplete"),
+  onOptionSelect(item) {
+    document.querySelector(".tutorial").classList.add("is-hidden");
+    onItemSelect(item, document.querySelector("#left-summary"));
+  },
+});
+createAutoComplete({
+  ...autocompleteConfig,
+  root: document.querySelector("#right-autocomplete"),
+  onOptionSelect(item) {
+    document.querySelector(".tutorial").classList.add("is-hidden");
+    onItemSelect(item, document.querySelector("#right-summary"));
+  },
 });
 
-const onItemSelect = async (item) => {
+const onItemSelect = async (item, summaryElement) => {
   const response = await axios.get("http://www.omdbapi.com", {
     params: {
       apikey: "7b4e2867",
       i: item.imdbID,
     },
   });
-  document.querySelector(".summary").innerHTML = itemTemplate(response.data);
+  summaryElement.innerHTML = itemTemplate(response.data);
 };
 
 const itemTemplate = (itemDetail) => {
