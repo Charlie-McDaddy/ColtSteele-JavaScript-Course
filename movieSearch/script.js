@@ -1,17 +1,17 @@
 createAutoComplete({
   root: document.querySelector(".autocomplete"),
-  renderOption(movie) {
-    const imgSrc = movie.Poster === "N/A" ? "" : movie.Poster;
+  renderOption(item) {
+    const imgSrc = item.Poster === "N/A" ? "" : item.Poster;
     return `
     <img src="${imgSrc}"/>
-    ${movie.Title} (${movie.Year})
+    ${item.Title} (${item.Year})
     `;
   },
-  onOptionSelect(movie) {
-    onMovieSelect(movie);
+  onOptionSelect(item) {
+    onItemSelect(item);
   },
-  inputValue(movie) {
-    return movie.Title;
+  inputValue(item) {
+    return item.Title;
   },
   async fetchData(searchTerm) {
     const response = await axios.get("http://www.omdbapi.com", {
@@ -28,50 +28,50 @@ createAutoComplete({
   },
 });
 
-const onMovieSelect = async (movie) => {
+const onItemSelect = async (item) => {
   const response = await axios.get("http://www.omdbapi.com", {
     params: {
       apikey: "7b4e2867",
-      i: movie.imdbID,
+      i: item.imdbID,
     },
   });
-  document.querySelector(".summary").innerHTML = movieTemplate(response.data);
+  document.querySelector(".summary").innerHTML = itemTemplate(response.data);
 };
 
-const movieTemplate = (movieDetail) => {
+const itemTemplate = (itemDetail) => {
   return `
 <article class="media">
   <figure class="media-left">
     <p class="image">
-      <img src="${movieDetail.Poster}" />
+      <img src="${itemDetail.Poster}" />
     </p>
   </figure>
   <div class="media-content">
     <div class="content">
-      <h1>${movieDetail.Title}</h1>
-      <h4>${movieDetail.Genre}</h4>
-      <p>${movieDetail.Plot}</p>
+      <h1>${itemDetail.Title}</h1>
+      <h4>${itemDetail.Genre}</h4>
+      <p>${itemDetail.Plot}</p>
     </div>
   </div>
 </article>
 <article class="notification is-primary">
-  <p class="title">${movieDetail.Awards}</p>
+  <p class="title">${itemDetail.Awards}</p>
   <p class="subtitle">Awards</p>
 </article>
 <article class="notification is-primary">
-  <p class="title">${movieDetail.BoxOffice}</p>
+  <p class="title">${itemDetail.BoxOffice}</p>
   <p class="subtitle">Box Office</p>
 </article>
 <article class="notification is-primary">
-  <p class="title">${movieDetail.Metascore}</p>
+  <p class="title">${itemDetail.Metascore}</p>
   <p class="subtitle">Metascore</p>
 </article>
 <article class="notification is-primary">
-  <p class="title">${movieDetail.imdbRating}</p>
+  <p class="title">${itemDetail.imdbRating}</p>
   <p class="subtitle">IMDB Rating</p>
 </article>
 <article class="notification is-primary">
-  <p class="title">${movieDetail.imdbVotes}</p>
+  <p class="title">${itemDetail.imdbVotes}</p>
   <p class="subtitle">IMDB Votes</p>
 </article>
 `;
